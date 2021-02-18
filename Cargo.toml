@@ -1,16 +1,16 @@
 [package]
-
-name = "petgraph"
+name = "nopetgraph"
 version = "0.5.1"
 license = "MIT/Apache-2.0"
 authors = [
-"bluss",
-"mitchmindtree"
+    "bluss",
+    "mitchmindtree",
+    "sorpaas",
 ]
 
 description = "Graph data structure library. Provides graph types and graph algorithms."
-documentation = "https://docs.rs/petgraph/"
-repository = "https://github.com/petgraph/petgraph"
+documentation = "https://docs.rs/nopetgraph/"
+repository = "https://github.com/outwork/nopetgraph"
 
 keywords = ["data-structure", "graph", "unionfind", "graph-algorithms"]
 categories = ["data-structures"]
@@ -18,11 +18,8 @@ categories = ["data-structures"]
 edition = "2018"
 
 [lib]
-
 name = "petgraph"
 bench = false
-
-[profile.release]
 
 [profile.bench]
 debug = true
