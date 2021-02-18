@@ -33,11 +33,13 @@ use crate::visit::{Data, IntoNodeReferences, NodeRef};
 
 pub use super::astar::astar;
 pub use super::dijkstra::dijkstra;
+#[cfg(feature = "graphmap")]
 pub use super::k_shortest_path::k_shortest_path;
 
 pub use super::isomorphism::{
     is_isomorphic, is_isomorphic_matching, is_isomorphic_subgraph, is_isomorphic_subgraph_matching,
 };
+#[cfg(feature = "graphmap")]
 pub use super::simple_paths::all_simple_paths;
 
 /// \[Generic\] Return the number of connected components of the graph.

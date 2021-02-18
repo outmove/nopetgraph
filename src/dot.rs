@@ -5,7 +5,7 @@ use std::fmt::{self, Display, Write};
 #[cfg(not(feature = "std"))]
 use core::fmt::{self, Display, Write};
 
-#[cfg(feature= "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::string::{String, ToString};
 
 use crate::visit::{
@@ -269,13 +269,13 @@ mod test {
     use crate::prelude::Graph;
     use crate::visit::NodeRef;
 
-    #[cfg(feature= "std")]
+    #[cfg(feature = "std")]
     use std::fmt::Write;
 
-    #[cfg(feature= "no_std")]
+    #[cfg(not(feature = "std"))]
     use core::fmt::Write;
 
-    #[cfg(feature= "alloc")]
+    #[cfg(not(feature = "std"))]
     use alloc::string::String;
 
     #[test]

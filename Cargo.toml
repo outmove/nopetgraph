@@ -27,7 +27,7 @@ debug = true
 [dependencies]
 fixedbitset = { version = "0.3.0", default-features = false }
 quickcheck = { optional = true, version = "0.8", default-features = false }
-indexmap = { version = "1.0.2" }
+indexmap = { version = "1.6.1", optional = true }
 serde = { version = "1.0", optional = true, default-features = false }
 serde_derive = { version = "1.0", optional = true }
 
@@ -40,9 +40,8 @@ itertools = { version = "0.8", default-features = false }
 [features]
 default = ["graphmap", "stable_graph", "matrix_graph", "std"]
 std = ["fixedbitset/std", "serde/std"]
-graphmap = []
-serde-1 = ["serde/default", "serde_derive"]
-serde-1-no_std = ["serde", "serde_derive"]
+graphmap = ["indexmap"]
+serde-1 = ["serde_derive"]
 stable_graph = []
 matrix_graph = []
 

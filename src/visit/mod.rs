@@ -703,22 +703,7 @@ where
     type EdgeId = (N, N);
 }
 
-#[cfg(all(feature = "graphmap", not(feature = "no_std")))]
-impl<N, E, Ty> Visitable for GraphMap<N, E, Ty>
-where
-    N: Copy + Ord + Hash,
-    Ty: EdgeType,
-{
-    type Map = HashSet<N>;
-    fn visit_map(&self) -> HashSet<N> {
-        HashSet::with_capacity(self.node_count())
-    }
-    fn reset_map(&self, map: &mut Self::Map) {
-        map.clear();
-    }
-}
-
-#[cfg(all(feature = "graphmap", feature = "alloc"))]
+#[cfg(feature = "graphmap")]
 impl<N, E, Ty> Visitable for GraphMap<N, E, Ty>
 where
     N: Copy + Ord + Hash,

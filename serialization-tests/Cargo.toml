@@ -1,5 +1,4 @@
 [package]
-
 name = "petgraph-serialization-tests"
 version = "0.0.0"
 publish = false
@@ -14,7 +13,7 @@ repository = "https://github.com/bluss/petgraph"
 
 
 [dependencies]
-petgraph = { path = "..", features = ["serde-1", "quickcheck"] }
+petgraph = { package = "nopetgraph", path = "..", features = ["serde-1", "quickcheck"] }
 itertools = { version = "0.6.2" }
 
 [dev-dependencies]

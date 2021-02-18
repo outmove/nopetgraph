@@ -104,8 +104,8 @@
 //!   Defaults on. Enables [`MatrixGraph`](./matrix_graph/struct.MatrixGraph.html).
 //!
 #![doc(html_root_url = "https://docs.rs/petgraph/0.4/")]
-#![cfg_attr(feature = "no_std", no_std)]
-#[cfg(not(feature = "std"))]
+#![cfg_attr(not(feature = "std"), no_std)]
+
 #[macro_use]
 extern crate alloc;
 
@@ -151,6 +151,7 @@ pub mod graphmap;
 mod isomorphism;
 mod iter_format;
 mod iter_utils;
+#[cfg(feature = "graphmap")]
 mod k_shortest_path;
 #[cfg(feature = "matrix_graph")]
 pub mod matrix_graph;
@@ -158,6 +159,7 @@ pub mod matrix_graph;
 mod quickcheck;
 #[cfg(feature = "serde-1")]
 mod serde_utils;
+#[cfg(feature = "graphmap")]
 mod simple_paths;
 mod traits_graph;
 pub mod unionfind;
