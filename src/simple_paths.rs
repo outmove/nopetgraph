@@ -11,7 +11,7 @@ use core::{
 };
 
 #[cfg(feature = "std")]
-type IndexSet<K, V> = indexmap::IndexSet<K>;
+type IndexSet<K> = indexmap::IndexSet<K>;
 
 #[cfg(not(feature = "std"))]
 type IndexSet<K> = indexmap::IndexSet<K, core::hash::BuildHasherDefault<twox_hash::XxHash64>>;
