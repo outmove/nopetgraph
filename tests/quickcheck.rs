@@ -29,9 +29,12 @@ use petgraph::data::FromElements;
 use petgraph::dot::{Config, Dot};
 use petgraph::graph::{edge_index, node_index, IndexType};
 use petgraph::graphmap::NodeTrait;
+use petgraph::operator::complement;
 use petgraph::prelude::*;
-use petgraph::visit::{EdgeRef, IntoEdgeReferences, IntoNodeReferences, NodeIndexable};
-use petgraph::visit::{Reversed, Topo};
+use petgraph::visit::{
+    EdgeFiltered, EdgeRef, IntoEdgeReferences, IntoNeighbors, IntoNodeIdentifiers,
+    IntoNodeReferences, NodeCount, NodeIndexable, Reversed, Topo, Visitable,
+};
 use petgraph::EdgeType;
 
 fn mst_graph<N, E, Ty, Ix>(g: &Graph<N, E, Ty, Ix>) -> Graph<N, E, Undirected, Ix>
@@ -82,7 +85,7 @@ quickcheck! {
     fn reverse_undirected(g: Small<UnGraph<(), ()>>) -> bool {
         let mut h = (*g).clone();
         h.reverse();
-        is_isomorphic(&g, &h)
+        is_isomorphic(&*g, &h)
     }
 }
 
@@ -274,10 +277,10 @@ fn isomorphism_1() {
                 ng.add_edge(map[s.index()], map[t.index()], g[i]);
             }
             if g.node_count() < 20 && g.edge_count() < 50 {
-                assert!(is_isomorphic(&g, &ng));
+                assert!(is_isomorphic(&*g, &ng));
             }
             assert!(is_isomorphic_matching(
-                &g,
+                &*g,
                 &ng,
                 PartialEq::eq,
                 PartialEq::eq
@@ -305,14 +308,14 @@ fn isomorphism_modify() {
         }
         if i.index() < g.node_count() || j.index() < g.edge_count() {
             assert!(!is_isomorphic_matching(
-                &g,
+                &*g,
                 &ng,
                 PartialEq::eq,
                 PartialEq::eq
             ));
         } else {
             assert!(is_isomorphic_matching(
-                &g,
+                &*g,
                 &ng,
                 PartialEq::eq,
                 PartialEq::eq
@@ -769,6 +772,33 @@ quickcheck! {
     }
 }
 
+quickcheck! {
+    // checks that the complement of the complement is the same as the input if the input does not contain self-loops
+    fn complement_(g: Graph<u32, u32>, _node: usize) -> bool {
+        if g.node_count() == 0 {
+            return true;
+        }
+        for x in g.node_indices() {
+            if g.contains_edge(x, x) {
+                return true;
+            }
+        }
+        let mut complement_graph: Graph<u32, u32>  = Graph::new();
+        let mut result: Graph<u32, u32> = Graph::new();
+        complement(&g, &mut complement_graph, 0);
+        complement(&complement_graph, &mut result, 0);
+
+        for x in g.node_indices() {
+            for y in g.node_indices() {
+                if g.contains_edge(x, y) != result.contains_edge(x, y){
+                    return false;
+                }
+            }
+        }
+        true
+    }
+}
+
 fn set<I>(iter: I) -> HashSet<I::Item>
 where
     I: IntoIterator,
@@ -981,5 +1011,100 @@ quickcheck! {
         for i in edges {
             assert!(gr2.edge_weight(edge_index(i)).is_none());
         }
+    }
+}
+
+fn naive_closure_foreach<G, F>(g: G, mut f: F)
+where
+    G: Visitable + IntoNeighbors + IntoNodeIdentifiers,
+    F: FnMut(G::NodeId, G::NodeId),
+{
+    let mut dfs = Dfs::empty(&g);
+    for i in g.node_identifiers() {
+        dfs.reset(&g);
+        dfs.move_to(i);
+        while let Some(nx) = dfs.next(&g) {
+            if i != nx {
+                f(i, nx);
+            }
+        }
+    }
+}
+
+fn naive_closure<G>(g: G) -> Vec<(G::NodeId, G::NodeId)>
+where
+    G: Visitable + IntoNodeIdentifiers + IntoNeighbors,
+{
+    let mut res = Vec::new();
+    naive_closure_foreach(g, |a, b| res.push((a, b)));
+    res
+}
+
+fn naive_closure_edgecount<G>(g: G) -> usize
+where
+    G: Visitable + IntoNodeIdentifiers + IntoNeighbors,
+{
+    let mut res = 0;
+    naive_closure_foreach(g, |_, _| res += 1);
+    res
+}
+
+quickcheck! {
+    fn test_tred(g: DAG<()>) -> bool {
+        let acyclic = g.0;
+        println!("acyclic graph {:#?}", &acyclic);
+        let toposort = toposort(&acyclic, None).unwrap();
+        println!("Toposort:");
+        for (new, old) in toposort.iter().enumerate() {
+            println!("{} -> {}", old.index(), new);
+        }
+        let (toposorted, revtopo): (petgraph::adj::List<(), usize>, _) =
+            petgraph::algo::tred::dag_to_toposorted_adjacency_list(&acyclic, &toposort);
+        println!("checking revtopo");
+        for (i, ix) in toposort.iter().enumerate() {
+            assert_eq!(i, revtopo[ix.index()]);
+        }
+        println!("toposorted adjacency list: {:#?}", &toposorted);
+        let (tred, tclos) = petgraph::algo::tred::dag_transitive_reduction_closure(&toposorted);
+        println!("tred: {:#?}", &tred);
+        println!("tclos: {:#?}", &tclos);
+        if tred.node_count() != tclos.node_count() {
+            println!("Different node count");
+            return false;
+        }
+        if acyclic.node_count() != tclos.node_count() {
+            println!("Different node count from original graph");
+            return false;
+        }
+        // check the closure
+        let mut clos_edges: Vec<(_, _)> = tclos.edge_references().map(|i| (i.source(), i.target())).collect();
+        clos_edges.sort();
+        let mut tred_closure = naive_closure(&tred);
+        tred_closure.sort();
+        if tred_closure != clos_edges {
+            println!("tclos is not the transitive closure of tred");
+            return false
+        }
+        // check the transitive reduction is a transitive reduction
+        for i in tred.edge_references() {
+            let filtered = EdgeFiltered::from_fn(&tred, |edge| {
+                edge.source() !=i.source() || edge.target() != i.target()
+            });
+            let new = naive_closure_edgecount(&filtered);
+            if new >= clos_edges.len() {
+                println!("when removing ({} -> {}) the transitive closure does not shrink",
+                         i.source().index(), i.target().index());
+                return false
+            }
+        }
+        // check that the transitive reduction is included in the original graph
+        for i in tred.edge_references() {
+            if acyclic.find_edge(toposort[i.source().index()], toposort[i.target().index()]).is_none() {
+                println!("tred is not included in the original graph");
+                return false
+            }
+        }
+        println!("ok!");
+        true
     }
 }

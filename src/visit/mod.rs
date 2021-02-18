@@ -71,11 +71,13 @@ use crate::prelude::GraphMap;
 use crate::prelude::StableGraph;
 use crate::prelude::{Direction, Graph};
 
+use crate::csr::Csr;
 use crate::graph::Frozen;
 use crate::graph::IndexType;
 #[cfg(feature = "stable_graph")]
 use crate::stable_graph;
-
+#[cfg(feature = "matrix_graph")]
+use crate::matrix_graph::MatrixGraph;
 #[cfg(feature = "graphmap")]
 use crate::graphmap::{self, NodeTrait};
 
@@ -547,12 +549,15 @@ where
     Ty: EdgeType,
     Ix: IndexType,
 {
+    #[inline]
     fn node_bound(&self) -> usize {
         self.node_count()
     }
+    #[inline]
     fn to_index(&self, ix: NodeIndex<Ix>) -> usize {
         ix.index()
     }
+    #[inline]
     fn from_index(&self, ix: usize) -> Self::NodeId {
         NodeIndex::new(ix)
     }
@@ -574,30 +579,6 @@ pub trait VisitMap<N> {
 
     /// Return whether `a` has been visited before.
     fn is_visited(&self, a: &N) -> bool;
-}
-
-impl<Ix> VisitMap<graph::NodeIndex<Ix>> for FixedBitSet
-where
-    Ix: IndexType,
-{
-    fn visit(&mut self, x: graph::NodeIndex<Ix>) -> bool {
-        !self.put(x.index())
-    }
-    fn is_visited(&self, x: &graph::NodeIndex<Ix>) -> bool {
-        self.contains(x.index())
-    }
-}
-
-impl<Ix> VisitMap<graph::EdgeIndex<Ix>> for FixedBitSet
-where
-    Ix: IndexType,
-{
-    fn visit(&mut self, x: graph::EdgeIndex<Ix>) -> bool {
-        !self.put(x.index())
-    }
-    fn is_visited(&self, x: &graph::EdgeIndex<Ix>) -> bool {
-        self.contains(x.index())
-    }
 }
 
 impl<Ix> VisitMap<Ix> for FixedBitSet
@@ -786,6 +767,75 @@ where
     #[inline]
     fn is_adjacent(&self, _: &(), a: N, b: N) -> bool {
         self.contains_edge(a, b)
+    }
+}
+
+trait_template! {
+/// A graph with a known edge count.
+pub trait EdgeCount : GraphBase {
+    @section self
+    /// Return the number of edges in the graph.
+    fn edge_count(self: &Self) -> usize;
+}
+}
+
+EdgeCount! {delegate_impl []}
+
+impl<N, E, Ty, Ix> EdgeCount for Graph<N, E, Ty, Ix>
+where
+    Ty: EdgeType,
+    Ix: IndexType,
+{
+    #[inline]
+    fn edge_count(&self) -> usize {
+        self.edge_count()
+    }
+}
+
+#[cfg(feature = "stable_graph")]
+impl<N, E, Ty, Ix> EdgeCount for StableGraph<N, E, Ty, Ix>
+where
+    Ty: EdgeType,
+    Ix: IndexType,
+{
+    #[inline]
+    fn edge_count(&self) -> usize {
+        self.edge_count()
+    }
+}
+
+#[cfg(feature = "graphmap")]
+impl<N, E, Ty> EdgeCount for GraphMap<N, E, Ty>
+where
+    N: NodeTrait,
+    Ty: EdgeType,
+{
+    #[inline]
+    fn edge_count(&self) -> usize {
+        self.edge_count()
+    }
+}
+
+#[cfg(feature = "matrix_graph")]
+impl<N, E, Ty> EdgeCount for MatrixGraph<N, E, Ty>
+where
+    N: NodeTrait,
+    Ty: EdgeType,
+{
+    #[inline]
+    fn edge_count(&self) -> usize {
+        self.edge_count()
+    }
+}
+
+impl<N, E, Ty, Ix> EdgeCount for Csr<N, E, Ty, Ix>
+where
+    Ty: EdgeType,
+    Ix: IndexType,
+{
+    #[inline]
+    fn edge_count(&self) -> usize {
+        self.edge_count()
     }
 }
 
