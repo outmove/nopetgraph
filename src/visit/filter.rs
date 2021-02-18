@@ -1,11 +1,11 @@
 use crate::prelude::*;
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::marker::PhantomData;
 #[cfg(feature = "std")]
 use std::{collections::HashSet, marker::PhantomData};
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::collections::BTreeSet as HashSet;
 
 use fixedbitset::FixedBitSet;
@@ -54,7 +54,7 @@ where
     }
 }
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 impl<N> FilterNode<N> for HashSet<N>
 where
     HashSet<N>: VisitMap<N>,

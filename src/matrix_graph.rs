@@ -8,7 +8,7 @@ use std::{
     ops::{Index, IndexMut},
 };
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::{
     cmp,
     marker::PhantomData,
@@ -16,7 +16,7 @@ use core::{
     ops::{Index, IndexMut},
 };
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::vec::Vec;
 
 use indexmap::IndexSet;

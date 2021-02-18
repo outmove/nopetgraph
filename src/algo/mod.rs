@@ -10,10 +10,10 @@ pub mod tred;
 #[cfg(feature = "std")]
 use std::{cmp::min, collections::{BinaryHeap, HashMap, VecDeque}, fmt::Debug, ops::Add};
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::{cmp::min, fmt::Debug, ops::Add};
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::{collections::{BinaryHeap, BTreeMap as HashMap}, vec::Vec, collections::vec_deque::VecDeque};
 
 use crate::prelude::*;

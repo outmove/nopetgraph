@@ -3,7 +3,7 @@ use self::quickcheck::{Arbitrary, Gen};
 
 use crate::graph::{node_index, IndexType};
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::{boxed::Box, vec::Vec};
 
 #[cfg(feature = "stable_graph")]

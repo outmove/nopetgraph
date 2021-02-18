@@ -1,7 +1,7 @@
 #[cfg(feature = "std")]
 use std::ops::{Deref, Index, IndexMut};
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::ops::{Deref, Index, IndexMut};
 
 use super::Frozen;

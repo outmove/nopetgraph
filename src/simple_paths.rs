@@ -4,7 +4,7 @@ use std::{
     iter::{from_fn, FromIterator},
 };
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::{
     hash::Hash,
     iter::{from_fn, FromIterator},
@@ -113,13 +113,13 @@ mod test {
     #[cfg(feature = "std")]
     use std::iter::FromIterator;
 
-    #[cfg(feature = "no_std")]
+    #[cfg(not(feature = "std"))]
     use core::iter::FromIterator;
 
     #[cfg(feature = "std")]
     use std::{collections::HashSet};
 
-    #[cfg(feature = "alloc")]
+    #[cfg(not(feature = "std"))]
     use alloc::{collections::BTreeSet as HashSet, vec::Vec};
 
     use itertools::assert_equal;

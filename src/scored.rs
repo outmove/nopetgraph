@@ -1,7 +1,7 @@
 #[cfg(feature = "std")]
 use std::cmp::Ordering;
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::cmp::Ordering;
 
 /// `MinScored<K, T>` holds a score `K` and a scored object `T` in

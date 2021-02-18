@@ -4,7 +4,7 @@ use std::collections::{
     BinaryHeap, HashMap,
 };
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::collections::{
     btree_map::Entry::{Occupied, Vacant},
     BTreeMap as HashMap, BinaryHeap,
@@ -13,7 +13,7 @@ use alloc::collections::{
 #[cfg(feature = "std")]
 use std::hash::Hash;
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::hash::Hash;
 
 use super::visit::{EdgeRef, IntoEdges, VisitMap, Visitable};
@@ -135,7 +135,7 @@ where
     scores
 }
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 pub fn dijkstra<G, F, K>(
     graph: G,
     start: G::NodeId,

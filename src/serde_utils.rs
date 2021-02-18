@@ -1,10 +1,10 @@
 #[cfg(feature = "std")]
 use std::{fmt, marker::PhantomData};
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::{fmt, marker::PhantomData};
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::vec::Vec;
 
 use serde::de::{Deserialize, Error, SeqAccess, Visitor};

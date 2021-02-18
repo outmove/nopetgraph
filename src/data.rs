@@ -1,6 +1,6 @@
 //! Graph traits for associated data and graph construction.
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::vec::Vec;
 
 use crate::graph::IndexType;

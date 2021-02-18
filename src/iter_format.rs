@@ -2,7 +2,7 @@
 #[cfg(feature = "std")]
 use std::{cell::RefCell, fmt};
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::{cell::RefCell, fmt};
 
 /// Format the iterator like a map

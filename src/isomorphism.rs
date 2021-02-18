@@ -1,10 +1,4 @@
-#[cfg(feature = "std")]
-use std::marker;
-
-#[cfg(feature = "no_std")]
-use core::marker;
-
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::vec::Vec;
 
 use super::data::DataMap;

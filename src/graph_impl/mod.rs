@@ -10,7 +10,7 @@ use std::{
     slice, u16, u32, u8, usize,
 };
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::{
     cmp::{self, max},
     fmt,
@@ -22,7 +22,7 @@ use core::{
     slice, u16, u32, u8, usize,
 };
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::vec::Vec;
 
 use crate::{Directed, Direction, EdgeType, Incoming, IntoWeightedEdge, Outgoing, Undirected};

@@ -58,7 +58,7 @@ use std::{
     hash::{BuildHasher, Hash},
 };
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::collections::BTreeSet as HashSet;
 
 use super::{graph, EdgeType};
@@ -607,7 +607,7 @@ where
     }
 }
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 impl<N> VisitMap<N> for HashSet<N>
 where
     N: Ord + Eq,

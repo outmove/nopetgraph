@@ -11,7 +11,7 @@ use std::{
     slice,
 };
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::{
     cmp, fmt, iter,
     marker::PhantomData,

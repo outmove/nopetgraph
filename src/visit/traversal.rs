@@ -5,7 +5,7 @@ use crate::Incoming;
 #[cfg(feature = "std")]
 use std::collections::VecDeque;
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::{collections::VecDeque, vec::Vec};
 
 /// Visit nodes of a graph in a depth-first-search (DFS) emitting nodes in

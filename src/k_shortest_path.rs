@@ -1,4 +1,4 @@
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::{
     collections::BinaryHeap,
     vec::Vec,
@@ -12,7 +12,7 @@ use std::{
 
 use indexmap::IndexMap;
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::hash::Hash;
 
 use super::visit::{EdgeRef, IntoEdges, NodeCount, NodeIndexable, Visitable};
@@ -42,6 +42,7 @@ use crate::{
 /// use petgraph::algo::k_shortest_path;
 /// use petgraph::prelude::*;
 /// use std::collections::HashMap;
+/// use indexmap::IndexMap;
 ///
 /// let mut graph : Graph<(),(),Directed>= Graph::new();
 /// let a = graph.add_node(()); // node with no weight

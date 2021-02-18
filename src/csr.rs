@@ -10,7 +10,7 @@ use std::{
     slice::Windows,
 };
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::{
     cmp::{max, Ordering},
     iter::{Enumerate, Zip},
@@ -20,7 +20,7 @@ use core::{
     slice::Windows,
 };
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::vec::Vec;
 
 use crate::visit::{Data, GraphProp, IntoEdgeReferences, NodeCount};
@@ -757,7 +757,7 @@ mod tests {
     use super::Csr;
     use crate::algo::bellman_ford;
     use crate::algo::tarjan_scc;
-    #[cfg(feature = "alloc")]
+    #[cfg(not(feature = "std"))]
     use alloc::vec::Vec;
     use crate::visit::Dfs;
     use crate::visit::VisitMap;

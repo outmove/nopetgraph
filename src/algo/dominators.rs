@@ -12,22 +12,19 @@
 //! strictly dominates **B** and there does not exist any node **C** where **A**
 //! dominates **C** and **C** dominates **B**.
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::{
-    collections::{BTreeSet as HashSet, btree_map::Iter},
+    collections::{BTreeSet as HashSet, BTreeMap as HashMap, btree_map::Iter},
     vec::Vec,
 };
 
-#[cfg(feature = "alloc")]
-use indexmap::IndexMap as HashMap;
-
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::{cmp::Ordering, hash::Hash, usize, iter::Iterator};
 
 #[cfg(feature = "std")]
 use std::{
     cmp::Ordering,
-    collections::{HashMap, HashSet},
+    collections::{HashMap, HashSet, hash_map::Iter},
     hash::Hash,
     usize,
 };
@@ -46,7 +43,7 @@ where
 
 impl<N> Dominators<N>
 where
-    N: Copy + Eq + Hash,
+    N: Copy + Eq + Hash + Ord,
 {
     /// Get the root node used to construct these dominance relations.
     pub fn root(&self) -> N {
@@ -117,7 +114,7 @@ where
 
 impl<'a, N> Iterator for DominatorsIter<'a, N>
 where
-    N: 'a + Copy + Eq + Hash,
+    N: 'a + Copy + Eq + Hash + Ord,
 {
     type Item = N;
 
@@ -283,7 +280,7 @@ where
         .collect()
 }
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 fn predecessor_sets_to_idx_vecs<N>(
     post_order: &[N],
     node_to_post_order_idx: &HashMap<N, usize>,
@@ -334,7 +331,7 @@ where
     (post_order, predecessor_sets)
 }
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 fn simple_fast_post_order<G>(
     graph: G,
     root: G::NodeId,
@@ -361,7 +358,7 @@ where
 }
 
 #[cfg(test)]
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 mod tests {
     use super::*;
 

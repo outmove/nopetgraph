@@ -7,7 +7,7 @@ use std::collections::{
 #[cfg(feature = "std")]
 use std::hash::Hash;
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::{
     collections::{
         btree_map::Entry::{Occupied, Vacant},
@@ -16,8 +16,11 @@ use alloc::{
     vec::Vec,
 };
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::hash::Hash;
+
+#[cfg(not(feature = "std"))]
+use super::visit::VisitMap;
 
 use super::visit::{EdgeRef, GraphBase, IntoEdges, Visitable};
 use crate::scored::MinScored;
@@ -156,7 +159,7 @@ where
     None
 }
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 pub fn astar<G, F, H, K, IsGoal>(
     graph: G,
     start: G::NodeId,
@@ -268,7 +271,7 @@ where
     }
 }
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 impl<G> PathTracker<G>
 where
     G: GraphBase,

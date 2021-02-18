@@ -105,7 +105,7 @@
 //!
 #![doc(html_root_url = "https://docs.rs/petgraph/0.4/")]
 #![cfg_attr(feature = "no_std", no_std)]
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 #[macro_use]
 extern crate alloc;
 

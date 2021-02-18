@@ -12,7 +12,7 @@ use std::{
     slice::Iter,
 };
 
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 use core::{
     cmp::Ordering,
     fmt,
@@ -23,7 +23,7 @@ use core::{
     slice::Iter,
 };
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 use alloc::vec::Vec;
 
 use indexmap::map::Keys;
