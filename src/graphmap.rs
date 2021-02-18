@@ -28,7 +28,12 @@ use alloc::vec::Vec;
 
 use indexmap::map::Keys;
 use indexmap::map::{Iter as IndexMapIter, IterMut as IndexMapIterMut};
-use indexmap::IndexMap;
+
+#[cfg(feature = "std")]
+type IndexMap<K, V> = indexmap::IndexMap<K, V>;
+
+#[cfg(not(feature = "std"))]
+type IndexMap<K, V> = indexmap::IndexMap<K, V, core::hash::BuildHasherDefault<twox_hash::XxHash64>>;
 
 use crate::{Directed, Direction, EdgeType, Incoming, Outgoing, Undirected};
 
@@ -125,8 +130,24 @@ where
     /// Create a new `GraphMap` with estimated capacity.
     pub fn with_capacity(nodes: usize, edges: usize) -> Self {
         GraphMap {
-            nodes: IndexMap::with_capacity(nodes),
-            edges: IndexMap::with_capacity(edges),
+            nodes: {
+                #[cfg(feature = "std")] {
+                    IndexMap::with_capacity(nodes)
+                }
+                
+                #[cfg(not(feature = "std"))] {
+                    IndexMap::with_capacity_and_hasher(nodes, Default::default())
+                }
+            },
+            edges: {
+                #[cfg(feature = "std")] {
+                    IndexMap::with_capacity(edges)
+                }
+
+                #[cfg(not(feature = "std"))] {
+                    IndexMap::with_capacity_and_hasher(edges, Default::default())
+                }
+            },
             ty: PhantomData,
         }
     }

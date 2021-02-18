@@ -10,7 +10,11 @@ use std::{
     hash::Hash
 };
 
-use indexmap::IndexMap;
+#[cfg(feature = "std")]
+type IndexMap<K, V> = indexmap::IndexMap<K, V>;
+
+#[cfg(not(feature = "std"))]
+type IndexMap<K, V> = indexmap::IndexMap<K, V, core::hash::BuildHasherDefault<twox_hash::XxHash64>>;
 
 #[cfg(not(feature = "std"))]
 use core::hash::Hash;
@@ -100,7 +104,7 @@ where
     K: Measure + Copy,
 {
     let mut counter: Vec<usize> = vec![0; graph.node_count()];
-    let mut scores = IndexMap::new();
+    let mut scores = IndexMap::default();
     let mut visit_next = BinaryHeap::new();
     let zero_score = K::default();
 

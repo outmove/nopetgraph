@@ -10,7 +10,11 @@ use core::{
     iter::{from_fn, FromIterator},
 };
 
-use indexmap::IndexSet;
+#[cfg(feature = "std")]
+type IndexSet<K, V> = indexmap::IndexSet<K>;
+
+#[cfg(not(feature = "std"))]
+type IndexSet<K> = indexmap::IndexSet<K, core::hash::BuildHasherDefault<twox_hash::XxHash64>>;
 
 use crate::{
     visit::{IntoNeighborsDirected, NodeCount},

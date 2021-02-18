@@ -1,6 +1,6 @@
 [package]
 name = "nopetgraph"
-version = "0.5.1"
+version = "0.5.2"
 license = "MIT/Apache-2.0"
 authors = [
     "bluss",
@@ -27,9 +27,10 @@ debug = true
 [dependencies]
 fixedbitset = { version = "0.3.0", default-features = false }
 quickcheck = { optional = true, version = "0.8", default-features = false }
-indexmap = { version = "1.6.1", optional = true }
+indexmap = { version = "1.6.1" }
 serde = { version = "1.0", optional = true, default-features = false }
 serde_derive = { version = "1.0", optional = true }
+twox-hash = { version = "1.6.0", default-features = false }
 
 [dev-dependencies]
 rand = "0.5.5"
@@ -39,8 +40,8 @@ itertools = { version = "0.8", default-features = false }
 
 [features]
 default = ["graphmap", "stable_graph", "matrix_graph", "std"]
-std = ["fixedbitset/std", "serde/std"]
-graphmap = ["indexmap"]
+std = ["fixedbitset/std", "serde/std", "twox-hash/std"]
+graphmap = []
 serde-1 = ["serde_derive"]
 stable_graph = []
 matrix_graph = []

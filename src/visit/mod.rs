@@ -59,6 +59,9 @@ use std::{
 };
 
 #[cfg(not(feature = "std"))]
+use core::hash::Hash;
+
+#[cfg(not(feature = "std"))]
 use alloc::collections::BTreeSet as HashSet;
 
 use super::{graph, EdgeType};

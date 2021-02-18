@@ -110,8 +110,6 @@
 extern crate alloc;
 
 extern crate fixedbitset;
-#[cfg(feature = "graphmap")]
-extern crate indexmap;
 
 #[cfg(feature = "serde-1")]
 extern crate serde;
@@ -151,7 +149,6 @@ pub mod graphmap;
 mod isomorphism;
 mod iter_format;
 mod iter_utils;
-#[cfg(feature = "graphmap")]
 mod k_shortest_path;
 #[cfg(feature = "matrix_graph")]
 pub mod matrix_graph;
@@ -159,7 +156,6 @@ pub mod matrix_graph;
 mod quickcheck;
 #[cfg(feature = "serde-1")]
 mod serde_utils;
-#[cfg(feature = "graphmap")]
 mod simple_paths;
 mod traits_graph;
 pub mod unionfind;
